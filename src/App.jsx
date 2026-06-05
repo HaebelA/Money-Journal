@@ -115,11 +115,27 @@ function Header() {
   const now = new Date();
   const weekday = now.toLocaleDateString("de-DE", { weekday: "long" });
   const date = now.toLocaleDateString("de-DE", { day: "2-digit", month: "long", year: "numeric" });
+  const [name, setName] = useState(() => localStorage.getItem("mmj-name") || "");
+  const [editing, setEditing] = useState(!localStorage.getItem("mmj-name"));
+
+  const saveName = (v) => { if (v.trim()) { localStorage.setItem("mmj-name", v.trim()); setName(v.trim()); setEditing(false); } };
+
   return (
     <header style={S.header}>
       <div style={S.headerInner}>
         <p style={S.headerEyebrow}>Money Mindset Journal</p>
-        <h1 style={S.headerTitle}>Ariane</h1>
+        {editing ? (
+          <input
+            autoFocus
+            defaultValue={name}
+            placeholder="Dein Name…"
+            style={S.headerNameInput}
+            onBlur={e => saveName(e.target.value)}
+            onKeyDown={e => e.key === "Enter" && saveName(e.target.value)}
+          />
+        ) : (
+          <h1 style={S.headerTitle} onClick={() => setEditing(true)}>{name} <span style={S.headerEdit}>✎</span></h1>
+        )}
         <p style={S.headerDate}>{weekday}, {date}</p>
       </div>
       <div style={S.headerOrb} />
@@ -536,7 +552,7 @@ const S = {
   header: { position: "relative", padding: "36px 24px 28px", background: `linear-gradient(160deg,${C.navy} 0%,${C.navyDark} 100%)`, borderBottom: `1px solid ${C.blueMid}`, overflow: "hidden" },
   headerInner: { position: "relative", zIndex: 1 },
   headerEyebrow: { fontSize: 10, letterSpacing: 4, color: C.tanLight, textTransform: "uppercase", margin: "0 0 8px", fontFamily: "system-ui,sans-serif" },
-  headerTitle: { fontSize: 32, fontWeight: "normal", margin: "0 0 6px", color: C.cream, letterSpacing: 1 },
+  headerTitle: { fontSize: 28, fontWeight: "normal", margin: "0 0 6px", color: C.cream, letterSpacing: 1 },
   headerDate: { fontSize: 13, color: "#a0b8cc", margin: 0, fontFamily: "system-ui,sans-serif" },
   headerOrb: { position: "absolute", top: -40, right: -40, width: 160, height: 160, borderRadius: "50%", background: `radial-gradient(circle,${C.blue}33 0%,transparent 70%)`, pointerEvents: "none" },
 
@@ -628,3 +644,9 @@ const S = {
   emptyText: { fontSize: 15, color: C.textLight, margin: "0 0 6px" },
   emptyHint: { fontSize: 13, color: C.textLight, fontFamily: "system-ui,sans-serif", opacity: 0.7 },
 };
+
+// injected style additions
+Object.assign(S, {
+  headerNameInput: { background: "transparent", border: "none", borderBottom: "2px solid rgba(242,232,207,0.5)", color: C.cream, fontSize: 28, fontFamily: "'Georgia','Times New Roman',serif", letterSpacing: 1, outline: "none", width: "100%", marginBottom: 6, padding: "2px 0" },
+  headerEdit: { fontSize: 14, opacity: 0.5, cursor: "pointer" },
+});

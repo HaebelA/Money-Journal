@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-title" content="Money Journal"/>
+<meta name="theme-color" content="#2A4D69"/>
+<title>Money Mindset Journal</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:#F7F7F7;font-family:'Georgia','Times New Roman',serif;color:#1e2e3d}
+button{cursor:pointer;font-family:inherit}
+input,textarea{font-family:inherit;outline:none}
+input::placeholder,textarea::placeholder{color:#b0c0cc}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-thumb{background:#d8cdb5;border-radius:4px}
+.app{min-height:100vh;background:#F7F7F7}
+/* Onboarding */
+.ob{min-height:100vh;background:linear-gradient(160deg,#2A4D69 0%,#1e3a50 100%);display:flex;align-items:center;justify-content:center;padding:24px}
+.ob-inner{max-width:400px;width:100%;text-align:center}
+.ob-progress{display:flex;gap:8px;justify-content:center;margin-bottom:48px}
+.ob-dot{width:6px;height:6px;border-radius:50%;background:rgba(242,232,207,.25);transition:all .3s}
+.ob-dot.active{background:#A68A64;width:20px;border-radius:3px}
+.ob-icon{width:80px;height:80px;border-radius:50%;background:rgba(242,232,207,.1);display:flex;align-items:center;justify-content:center;margin:0 auto 28px;font-size:36px;color:#A68A64}
+.ob h1{font-size:30px;font-weight:normal;color:#F2E8CF;margin:0 0 16px;letter-spacing:.5px}
+.ob p{font-size:16px;color:#a0b8cc;line-height:1.7;margin:0 0 36px}
+.ob ul{list-style:none;text-align:left;margin-bottom:36px}
+.ob ul li{display:flex;gap:12px;align-items:flex-start;margin-bottom:14px;color:#a0b8cc;font-size:15px;line-height:1.5}
+.ob ul li span.dot{color:#A68A64;flex-shrink:0;margin-top:2px}
+.ob input{width:100%;background:rgba(255,255,255,.08);border:1px solid rgba(242,232,207,.3);border-radius:10px;padding:14px 16px;color:#F2E8CF;font-size:18px;font-family:'Georgia',serif;margin-bottom:36px;text-align:center}
+.ob-btn{width:100%;background:#A68A64;color:#fff;border:none;border-radius:10px;padding:16px;font-size:15px;font-weight:700;letter-spacing:.5px}
+.ob-select{width:100%;background:rgba(255,255,255,.08);border:1px solid rgba(242,232,207,.3);border-radius:10px;padding:14px 16px;color:#F2E8CF;font-size:15px;font-family:'Georgia',serif;margin-bottom:12px;-webkit-appearance:none;appearance:none;cursor:pointer}
+.ob-select option{background:#2A4D69;color:#F2E8CF}
+.ob-textarea{width:100%;background:rgba(255,255,255,.08);border:1px solid rgba(242,232,207,.3);border-radius:10px;padding:14px 16px;color:#F2E8CF;font-size:15px;font-family:'Georgia',serif;margin-bottom:24px;resize:none;line-height:1.6}
+.ob-textarea::placeholder{color:rgba(160,184,204,.6)}
+.ob-back{background:none;border:none;color:rgba(160,184,204,.6);font-size:13px;margin-top:16px;padding:8px;display:block;width:100%}
+/* Header */
+.hd{position:relative;padding:32px 20px 24px;background:linear-gradient(160deg,#2A4D69 0%,#1e3a50 100%);overflow:visible;display:flex;justify-content:space-between;align-items:flex-start}
+.hd-inner{position:relative;z-index:1}
+.hd-eyebrow{font-size:10px;letter-spacing:4px;color:#c4aa84;text-transform:uppercase;margin:0 0 8px;font-family:system-ui,sans-serif}
+.hd-title{font-size:26px;font-weight:normal;color:#F2E8CF;letter-spacing:1px;margin:0 0 6px}
+.hd-meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.hd-date{font-size:13px;color:#a0b8cc;font-family:system-ui,sans-serif}
+.hd-reminder{font-size:10px;color:rgba(160,184,204,0.7);font-family:system-ui,sans-serif;margin-top:4px;max-width:180px;line-height:1.4}
+.hd-streak{font-size:11px;color:#c4aa84;background:rgba(166,138,100,.15);border:1px solid rgba(166,138,100,.3);padding:3px 10px;border-radius:20px;font-family:system-ui,sans-serif}
+.hd-orb{position:absolute;top:-40px;right:-40px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(75,134,180,.2) 0%,transparent 70%);pointer-events:none;z-index:0}
+.jar-wrap{display:flex;flex-direction:column;align-items:center;gap:4px;position:relative;z-index:1;flex-shrink:0;margin-right:8px}
+.jar-hover-wrap{position:relative}
+.jar-tooltip{display:none;position:absolute;top:0;right:calc(100% + 10px);background:#fff;border:1px solid #d8cdb5;border-radius:12px;padding:10px 14px;min-width:190px;box-shadow:0 8px 24px rgba(42,77,105,.15);font-size:12px;color:#4a5a6a;line-height:1.5;z-index:9999;font-family:system-ui,sans-serif}
+.jar-tooltip strong{color:#A68A64}
+.jar-hover-wrap:hover .jar-tooltip{display:block}
+.jar-info{display:flex;flex-direction:column;align-items:center;gap:2px}
+.jar-coins{font-size:12px;color:#F2E8CF;font-family:system-ui,sans-serif;font-weight:700}
+.jar-streak{font-size:10px;color:#a0b8cc;font-family:system-ui,sans-serif}
+.jar-next{font-size:10px;color:#c4aa84;font-family:system-ui,sans-serif}
+.hd-export{position:relative;z-index:1;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:8px;color:#F2E8CF;font-size:20px;width:38px;height:38px;display:flex;align-items:center;justify-content:center;flex-shrink:0;letter-spacing:2px}
+.hd-menu{position:absolute;top:44px;right:0;background:#fff;border:1px solid #d8cdb5;border-radius:12px;box-shadow:0 8px 24px rgba(42,77,105,.2);min-width:220px;overflow:hidden;z-index:999;display:none}
+.hd-menu.open{display:block}
+.hd-menu-item{display:block;width:100%;padding:13px 18px;background:none;border:none;border-bottom:1px solid #f0ebe0;text-align:left;font-size:13px;font-family:system-ui,sans-serif;color:#2A4D69;cursor:pointer}
+.hd-menu-item:last-child{border-bottom:none}
+.hd-menu-item:hover{background:#F7F7F7}
+/* Nav */
+.nav{display:flex;border-bottom:1px solid #d8cdb5;background:#F7F7F7;position:sticky;top:0;z-index:10;box-shadow:0 1px 8px rgba(42,77,105,.07)}
+.nav button{flex:1;padding:13px 8px;background:none;border:none;border-bottom:2px solid transparent;color:#8a9aaa;font-size:11px;font-family:system-ui,sans-serif;letter-spacing:.5px;display:flex;flex-direction:column;align-items:center;gap:3px;transition:color .2s}
+.nav button.active{color:#2A4D69;border-bottom-color:#A68A64}
+.nav button span.ni{font-size:15px}
+/* Main */
+.main{max-width:560px;margin:0 auto;padding:0 16px 60px}
+.page{padding-top:24px}
+/* Cards */
+.card{background:#fff;border:1px solid #d8cdb5;border-radius:14px;padding:20px;margin-bottom:14px;box-shadow:0 2px 12px rgba(42,77,105,.06)}
+.card-label{font-size:14px;color:#2A4D69;margin:0 0 14px;line-height:1.5}
+.slabel{font-size:10px;letter-spacing:3px;color:#A68A64;text-transform:uppercase;margin:0 0 4px;font-family:system-ui,sans-serif}
+.subtitle{font-size:13px;color:#8a9aaa;margin:0 0 20px;font-family:system-ui,sans-serif}
+.tab-intro{font-size:13px;color:#4a5a6a;margin:4px 0 16px;font-family:system-ui,sans-serif;line-height:1.5;border-left:2px solid #A68A64;padding-left:10px}
+.week-selector{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:16px;scrollbar-width:none}
+.week-selector::-webkit-scrollbar{display:none}
+.week-btn{background:#fff;border:1px solid #d8cdb5;border-radius:20px;padding:6px 14px;color:#8a9aaa;font-size:11px;font-family:system-ui,sans-serif;cursor:pointer;white-space:nowrap;flex-shrink:0}
+.week-btn.active{background:#2A4D69;border-color:#2A4D69;color:#F2E8CF}
+.ph{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px}
+/* Mood slider */
+.mood-slider-display{text-align:center;margin-bottom:16px}
+.mood-slider-emoji{font-size:36px;display:block;margin-bottom:4px}
+.mood-slider-label{font-size:13px;color:#4a5a6a;font-family:system-ui,sans-serif}
+.mood-slider{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:6px;background:linear-gradient(90deg,#c97b7b,#F2E8CF,#5a9e7a);outline:none;margin-bottom:8px}
+.mood-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:24px;height:24px;border-radius:50%;background:#2A4D69;border:3px solid #F2E8CF;box-shadow:0 2px 8px rgba(42,77,105,.3);cursor:pointer}
+.mood-slider::-moz-range-thumb{width:24px;height:24px;border-radius:50%;background:#2A4D69;border:3px solid #F2E8CF;box-shadow:0 2px 8px rgba(42,77,105,.3);cursor:pointer}
+.mood-slider-ticks{display:flex;justify-content:space-between;padding:0 4px}
+.mood-tick{font-size:16px;opacity:.5}
+/* Lines */
+.line-wrap{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.line-num{color:#8a9aaa;font-size:13px;min-width:18px}
+.line-input{flex:1;background:transparent;border:none;border-bottom:1px solid #d8cdb5;color:#1e2e3d;font-size:14px;font-family:'Georgia',serif;padding:4px 0}
+.line-input.gold{font-style:italic;color:#A68A64}
+/* Balance boxes */
+.balance-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.balance-box{background:#F2E8CF;border:1px solid #e0d4b8;border-radius:10px;padding:12px}
+.balance-box-label{font-size:10px;color:#7a6448;margin:0 0 6px;letter-spacing:1px;text-transform:uppercase;font-family:system-ui,sans-serif}
+.balance-input{width:100%;background:transparent;border:none;border-bottom:1px solid #e0d4b8;color:#2A4D69;font-size:16px;padding:2px 0;font-family:'Georgia',serif}
+/* Deep */
+.deep-card{width:100%;background:#fff;border:1px solid #d8cdb5;border-radius:12px;padding:16px 18px;margin-bottom:10px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;text-align:left;box-shadow:0 1px 6px rgba(42,77,105,.05)}
+.deep-num{font-size:13px;min-width:20px;padding-top:2px;font-family:system-ui,sans-serif;color:#8a9aaa}
+.deep-num.done{color:#A68A64}
+.deep-q{font-size:14px;color:#1e2e3d;margin:0;line-height:1.5}
+.deep-preview{font-size:12px;color:#4a5a6a;margin:6px 0 0;font-style:italic;line-height:1.4}
+.deep-empty{font-size:12px;color:#8a9aaa;margin:4px 0 0}
+.deep-arrow{color:#8a9aaa;font-size:16px;margin-left:12px;flex-shrink:0}
+.deep-Q{font-size:16px;color:#2A4D69;margin:0 0 16px;line-height:1.6}
+/* Goals */
+.goal-card{background:#fff;border:1px solid #d8cdb5;border-radius:14px;padding:20px;margin-bottom:14px;box-shadow:0 2px 12px rgba(42,77,105,.06)}
+.goal-name{font-size:16px;color:#2A4D69;margin:0 0 2px}
+.goal-vision{font-size:12px;color:#4a5a6a;font-style:italic;margin:0 0 3px;line-height:1.4}
+.goal-by{font-size:11px;color:#8a9aaa;font-family:system-ui,sans-serif}
+.bar-bg{background:#e0d4b8;border-radius:6px;height:7px;overflow:hidden;margin:6px 0 4px}
+.bar-fill{height:100%;border-radius:6px;transition:width .5s ease}
+.goal-pct{font-size:11px;color:#8a9aaa;font-family:system-ui,sans-serif}
+/* Entries */
+.entry-card{width:100%;background:#fff;border:1px solid #d8cdb5;border-radius:12px;padding:15px;margin-bottom:10px;cursor:pointer;display:flex;align-items:flex-start;text-align:left;box-shadow:0 1px 6px rgba(42,77,105,.05)}
+.tag-dot{width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0}
+.entry-title{font-size:14px;color:#2A4D69;margin:0;font-family:system-ui,sans-serif}
+.entry-date{font-size:11px;color:#8a9aaa;font-family:system-ui,sans-serif;flex-shrink:0}
+.entry-preview{font-size:12px;color:#4a5a6a;margin:4px 0 0;line-height:1.5}
+/* Buttons */
+.btn-tan{background:#A68A64;color:#fff;border:none;border-radius:8px;padding:10px 20px;font-size:12px;font-weight:700;letter-spacing:.5px;flex-shrink:0}
+.btn-ghost{background:transparent;color:#4a5a6a;border:1px solid #d8cdb5;border-radius:8px;padding:10px 16px;font-size:12px;font-family:system-ui,sans-serif}
+.btn-blue{background:transparent;color:#4B86B4;border:1px solid rgba(75,134,180,.3);border-radius:8px;padding:8px 16px;font-size:12px;margin-top:8px}
+.btn-secondary{background:transparent;color:#A68A64;border:1px solid rgba(166,138,100,.4);border-radius:8px;padding:10px 16px;font-size:12px;font-family:system-ui,sans-serif;cursor:pointer}
+.btn-row{display:flex;gap:8px;margin-top:14px}
+.btn-del{background:none;border:none;color:#8a9aaa;font-size:14px;padding:0 4px}
+.back-btn{background:none;border:none;color:#8a9aaa;font-size:13px;font-family:system-ui,sans-serif;padding:0 0 16px;display:block}
+/* Tags */
+.tag-scroll{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:16px;scrollbar-width:none}
+.tag-btn{background:#F7F7F7;border:1px solid #d8cdb5;border-radius:20px;padding:5px 12px;color:#4a5a6a;font-size:11px;font-family:system-ui,sans-serif;white-space:nowrap}
+.tag-chip{border:1px solid;border-radius:20px;padding:3px 12px;font-size:11px;font-family:system-ui,sans-serif;display:inline-block;margin-bottom:12px}
+/* Forms */
+.form-input{width:100%;background:#F7F7F7;border:1px solid #d8cdb5;border-radius:8px;padding:10px 12px;color:#1e2e3d;font-size:14px;font-family:'Georgia',serif;margin-bottom:10px}
+.form-textarea{width:100%;background:#F7F7F7;border:1px solid #d8cdb5;border-radius:8px;padding:12px;color:#1e2e3d;font-size:14px;font-family:'Georgia',serif;resize:vertical;min-height:130px;line-height:1.75}
+.emoji-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.emoji-btn{background:#F7F7F7;border:1px solid #d8cdb5;border-radius:8px;width:36px;height:36px;font-size:16px;display:flex;align-items:center;justify-content:center}
+.emoji-btn.active{border-color:#A68A64;background:#F2E8CF}
+/* Empty */
+.empty{text-align:center;padding:52px 20px}
+.empty-icon{font-size:30px;opacity:.3;color:#4B86B4;margin-bottom:12px}
+.empty-text{font-size:15px;color:#8a9aaa;margin-bottom:6px}
+.empty-hint{font-size:13px;color:#8a9aaa;opacity:.7;font-family:system-ui,sans-serif}
+/* View */
+.view-title{font-size:20px;font-weight:normal;color:#2A4D69;margin:12px 0 4px}
+.view-date{font-size:12px;color:#8a9aaa;margin:0 0 18px;font-family:system-ui,sans-serif}
+.view-text{font-size:15px;color:#4a5a6a;line-height:1.85}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+// ─── Data & Constants ─────────────────────────────────────────────────────────
+const C = {
+  navy:"#2A4D69",blue:"#4B86B4",cream:"#F2E8CF",tan:"#A68A64",
+  tanLight:"#c4aa84",creamDark:"#e0d4b8",textDark:"#1e2e3d",textMid:"#4a5a6a",textLight:"#8a9aaa"
+};
+const WEEKLY_PROMPTS = [
+  {id:"grateful",label:"Was hat mir diese Woche finanzielle Freude gebracht?",icon:"✦",rows:3},
+  {id:"learning",label:"Was ich diese Woche über Geld gelernt habe…",icon:"◎",rows:2},
+  {id:"next",label:"Eine konkrete Geldhandlung, die ich nächste Woche angehe",icon:"→",rows:2},
+];
+const DEEP_QUESTIONS = [
+  "Wo habe ich diese Woche eine souveräne Geldentscheidung getroffen?",
+  "Wie fühle ich mich gerade, wenn ich an meine Kontostände denke?",
+  "Welcher Glaubenssatz über Geld möchte ich heute loslassen?",
+  "Was würde mein höchstes Selbst mit 1.000€ extra tun?",
+  "In welchem Bereich meines Lebens fühle ich mich finanziell souverän?",
+  "Was bedeutet Reichtum für mich – jenseits von Zahlen?",
+  "Wann habe ich zuletzt aus Freude statt aus Angst eine Geldentscheidung getroffen?",
+  "Welche Ausgabe hat mir diesen Monat wirklich Freude gemacht?",
+  "Was möchte ich mir erlauben, das ich mir bisher verboten habe?",
+  "Wo sabotiere ich meinen eigenen Wohlstand gerade?",
+  "Wenn Geld keine Rolle spielen würde – was würde ich sofort ändern?",
+];
+const MOOD_OPTIONS = [
+  {val:1,emoji:"😔",label:"Angespannt"},
+  {val:2,emoji:"😐",label:"Neutral"},
+  {val:3,emoji:"🙂",label:"Stabil"},
+  {val:4,emoji:"😊",label:"Zuversichtlich"},
+  {val:5,emoji:"✨",label:"Souverän"},
+];
+const ENTRY_TAGS = ["Gedanke","Sorge","Wunsch","Idee","Aha-Moment","Dankbarkeit"];
+const TAG_COLORS = {"Gedanke":"#A68A64","Sorge":"#c97b7b","Wunsch":"#9b8ec4","Idee":"#5a9e7a","Aha-Moment":"#4B86B4","Dankbarkeit":"#c4aa84"};
+const EMOJIS = ["◇","✈️","🏡","💰","🌿","💎","🌊","✦","🎓","🌴"];
+const BALANCE_FIELDS = ["Girokonto","Notgroschen","Investitionen","Freizeit","Sonstiges"];
+
+// ─── Storage ──────────────────────────────────────────────────────────────────
+const ls = {
+  get:(k)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):null}catch{return null}},
+  set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch{}}
+};
+const KEYS = {weekly:"mmj-weekly",goals:"mmj-goals",affirmations:"mmj-affirmations",entries:"mmj-entries",name:"mmj-name",onboarded:"mmj-onboarded",streak:"mmj-streak",coins:"mmj-coins",customQ:"mmj-custom-questions"};
+
+// ─── State ────────────────────────────────────────────────────────────────────
+const state = {
+  onboarded: !!ls.get(KEYS.onboarded),
+  name: ls.get(KEYS.name)||"",
+  tab: "week",
+  obStep: 0,
+  obName: "",
+  obFirstEntry: "",
+  obFirstCustom: "",
+  weekly: ls.get(KEYS.weekly)||{},
+  goals: ls.get(KEYS.goals)||[],
+  affirmations: ls.get(KEYS.affirmations)||["","",""],
+  entries: ls.get(KEYS.entries)||[],
+  streak: ls.get(KEYS.streak)||{count:0,weeks:[],lastWeek:null},
+  coins: ls.get(KEYS.coins)||0,
+  customQuestions: ls.get(KEYS.customQ)||[],
+  // UI state
+  weekView: "current", // "current" or a weekKey like "2025-W22"
+  deepView: "current",
+  adding: false,
+  goalForm: {name:"",vision:"",target:"",saved:"",emoji:"◇",by:""},
+  depositFor: null,
+  depositAmt: "",
+  journalMode: "list",
+  journalDraft: {title:"",text:"",tag:"Gedanke"},
+  journalViewing: null,
+  journalFilter: "Alle",
+  deepActive: null,
+  deepDraft: "",
+  deepAddingQ: false,
+  deepNewQ: "",
+};
+
+function getWeekKey(){
+  const now=new Date(),jan1=new Date(now.getFullYear(),0,1);
+  const week=Math.ceil(((now-jan1)/86400000+jan1.getDay()+1)/7);
+  return `${now.getFullYear()}-W${week}`;
+}
+function getWeekNum(key){ return parseInt(key.split("-W")[1]); }
+function getWeekYear(key){ return parseInt(key.split("-W")[0]); }
+
+function updateStreak(){
+  const wk=getWeekKey();
+  const streak=state.streak;
+  if(streak.weeks.includes(wk)) return; // already counted this week
+
+  const prevWeeks=streak.weeks;
+  const lastWk=prevWeeks[prevWeeks.length-1];
+
+  // Check if consecutive (previous week was last week)
+  let isConsecutive=false;
+  if(lastWk){
+    const curY=getWeekYear(wk),curW=getWeekNum(wk);
+    const lstY=getWeekYear(lastWk),lstW=getWeekNum(lastWk);
+    // consecutive if same year and week-1, or year rollover (week 1 follows week 52/53)
+    isConsecutive=(curY===lstY&&curW===lstW+1)||(curY===lstY+1&&lstW>=52&&curW===1);
+
+    // Penalize missed weeks (gap > 1)
+    if(!isConsecutive){
+      const gap=(curY===lstY)?curW-lstW-1:curW+(52-lstW)-1;
+      const missedPenalty=Math.min(gap,Math.floor(state.coins/5))*5;
+      state.coins=Math.max(0,state.coins-missedPenalty);
+      ls.set(KEYS.coins,state.coins);
+      streak.count=0; // reset streak
+    }
+  }
+
+  streak.weeks=[...prevWeeks,wk].slice(-52);
+  streak.count=isConsecutive?(streak.count||0)+1:1;
+  streak.lastWeek=wk;
+
+  // Award coins every 4 consecutive weeks
+  if(streak.count>0&&streak.count%4===0){
+    state.coins+=5;
+    ls.set(KEYS.coins,state.coins);
+  }
+
+  ls.set(KEYS.streak,streak);
+  state.streak=streak;
+}
+
+function getPastWeekKeys(n){
+  const keys=[];
+  const now=new Date();
+  for(let i=0;i<n;i++){
+    const d=new Date(now);
+    d.setDate(d.getDate()-i*7);
+    const jan1=new Date(d.getFullYear(),0,1);
+    const week=Math.ceil(((d-jan1)/86400000+jan1.getDay()+1)/7);
+    keys.push(`${d.getFullYear()}-W${week}`);
+  }
+  return keys; // [current, -1week, -2weeks, ...]
+}
+
+function weekLabel(key){
+  if(key===getWeekKey()) return "Aktuelle Woche";
+  const [y,w]=key.split("-W");
+  // Get Monday of that week
+  const jan1=new Date(parseInt(y),0,1);
+  const dayOfWeek=jan1.getDay()||7;
+  const monday=new Date(jan1);
+  monday.setDate(jan1.getDate()+(parseInt(w)-1)*7+(1-dayOfWeek+7)%7-(dayOfWeek===1?7:0));
+  const sunday=new Date(monday);sunday.setDate(monday.getDate()+6);
+  return `${monday.toLocaleDateString("de-DE",{day:"2-digit",month:"short"})} – ${sunday.toLocaleDateString("de-DE",{day:"2-digit",month:"short"})}`;
+}
+
+function buildWeekSelector(current, onChange){
+  const weeks=getPastWeekKeys(4); // current + 3 past
+  return h("div",{class:"week-selector"},
+    ...weeks.map(wk=>
+      h("button",{
+        class:`week-btn${current===wk?" active":""}`,
+        onclick:()=>onChange(wk)
+      }, weekLabel(wk))
+    )
+  );
+}
+function h(tag,attrs,...children){
+  const el=document.createElement(tag);
+  if(attrs) Object.entries(attrs).forEach(([k,v])=>{
+    if(k==="class") el.className=v;
+    else if(k==="style"&&typeof v==="object") Object.assign(el.style,v);
+    else if(k.startsWith("on")) el.addEventListener(k.slice(2).toLowerCase(),v);
+    else el.setAttribute(k,v);
+  });
+  children.flat(Infinity).forEach(c=>{
+    if(c==null||c===false) return;
+    el.appendChild(typeof c==="string"||typeof c==="number"?document.createTextNode(c):c);
+  });
+  return el;
+}
+function render(){document.getElementById("app").innerHTML="";document.getElementById("app").appendChild(buildApp())}
+
+// ─── Export ───────────────────────────────────────────────────────────────────
+function exportData(){
+  const d=new Date().toLocaleDateString("de-DE");
+  let txt=`MONEY MINDSET JOURNAL – Export vom ${d}\nName: ${state.name}\n\n${"═".repeat(50)}\n\nWOCHENREFLEXIONEN\n${"─".repeat(30)}\n`;
+  Object.entries(state.weekly).forEach(([wk,v])=>{
+    txt+=`\nWoche: ${wk}\n`;
+    if(v.mood) txt+=`Stimmung: ${MOOD_OPTIONS.find(m=>m.val===v.mood)?.label||v.mood}\n`;
+    WEEKLY_PROMPTS.forEach(p=>{if(v[p.id]?.some(Boolean)){txt+=`\n${p.label}\n`;v[p.id].filter(Boolean).forEach((l,i)=>txt+=`  ${i+1}. ${l}\n`);}});
+  });
+  txt+=`\n\n${"═".repeat(50)}\nZIELE\n${"─".repeat(30)}\n`;
+  state.goals.forEach(g=>{txt+=`\n${g.emoji} ${g.name}\n`;if(g.vision)txt+=`  Vision: ${g.vision}\n`;if(g.target)txt+=`  Fortschritt: ${(g.saved||0).toFixed(0)}€ / ${g.target}€\n`;});
+  txt+=`\n\n${"═".repeat(50)}\nTAGEBUCH\n${"─".repeat(30)}\n`;
+  state.entries.forEach(e=>{txt+=`\n[${e.tag}] ${new Date(e.date).toLocaleDateString("de-DE")}\n`;if(e.title)txt+=`${e.title}\n`;txt+=`${e.text}\n`;});
+  const a=document.createElement("a");
+  a.href="data:text/plain;charset=utf-8,"+encodeURIComponent(txt);
+  a.download=`MoneyJournal_${new Date().toISOString().split("T")[0]}.txt`;
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+}
+
+// ─── Onboarding ───────────────────────────────────────────────────────────────
+const FIRST_ENTRY_OPTIONS = [
+  "…einer Bedrohung, die ich im Griff haben muss",
+  "…einem Spiegel, der mir zeigt, was ich noch nicht habe",
+  "…einem Werkzeug, das ich nie richtig benutze",
+  "…etwas, das immer knapp ist",
+  "…Freiheit – aber noch nicht für mich",
+  "…Energie, die ich noch nicht wirklich fließen lasse",
+  "…etwas, mit dem ich gerade Frieden schließe",
+];
+
+function buildOnboarding(){
+  const steps=[
+    {
+      icon:"✦",
+      title:"Willkommen.",
+      text:"Ich habe dieses Journal gebaut, weil ich kein Buch zum Reinschreiben wollte und kein Dokument zum Ausdrucken. Ich wollte eines, das ich immer dabei habe – und das ich ausfüllen kann, wann ich Zeit und Lust habe. Von schnell was notieren für die Tagesroutine bis zu tiefer Mindset-Arbeit. Genau das ist es geworden.",
+      btn:"Ich bin dabei"
+    },
+    {
+      icon:"◈",
+      title:"Wie heißt du?",
+      text:"Damit das Journal wirklich deins ist.",
+      input:true,
+      btn:"Weiter"
+    },
+    {
+      icon:"◇",
+      title:"Was dich erwartet",
+      list:[
+        "Wöchentliche Reflexion – schnell, ehrlich, ohne Aufwand",
+        "Tiefenarbeit an deinen Geldmustern und Glaubenssätzen",
+        "Raum für Ziele, die aus Kraft entstehen – nicht aus Angst",
+        "Ein freies Tagebuch für alles, was dich rund ums Thema Geld bewegt",
+      ],
+      btn:"Weiter"
+    },
+    {
+      icon:"✐",
+      title:"Eine erste Frage.",
+      text:"Geld fühlt sich für mich gerade an wie…",
+      firstEntry:true,
+      btn:"Journal öffnen →"
+    },
+  ];
+  const s=steps[state.obStep];
+  const dots=steps.map((_,i)=>h("div",{class:`ob-dot${i<=state.obStep?" active":""}`}));
+  const iconEl=h("div",{class:"ob-icon"},s.icon);
+  const titleEl=h("h1",null,s.title);
+  const contentEls=[];
+  if(s.text) contentEls.push(h("p",null,s.text));
+  if(s.input){
+    const inp=h("input",{placeholder:"Dein Name…",value:state.obName||""});
+    inp.addEventListener("input",e=>{state.obName=e.target.value});
+    inp.addEventListener("keydown",e=>{if(e.key==="Enter")nextOb();});
+    setTimeout(()=>inp.focus(),100);
+    contentEls.push(inp);
+  }
+  if(s.list) contentEls.push(h("ul",null,...s.list.map(item=>h("li",null,h("span",{class:"dot"},"✦"),item))));
+  if(s.firstEntry){
+    // Dropdown
+    const sel=h("select",{class:"ob-select",id:"ob-first-select"});
+    sel.appendChild(h("option",{value:""},"– Wähle aus…"));
+    FIRST_ENTRY_OPTIONS.forEach(opt=>{
+      const o=h("option",{value:opt},opt);
+      if(state.obFirstEntry===opt) o.selected=true;
+      sel.appendChild(o);
+    });
+    sel.addEventListener("change",e=>{
+      state.obFirstEntry=e.target.value;
+      const custom=document.getElementById("ob-first-custom");
+      if(custom) custom.style.display=e.target.value?"none":"block";
+    });
+    const customInp=h("textarea",{class:"ob-textarea",id:"ob-first-custom",placeholder:"…oder schreibe es selbst.",rows:"3"},state.obFirstCustom||"");
+    customInp.style.display=state.obFirstEntry?"none":"block";
+    customInp.addEventListener("input",e=>{state.obFirstCustom=e.target.value;});
+    contentEls.push(sel,customInp);
+  }
+  const btnEl=h("button",{class:"ob-btn",onclick:nextOb},s.btn);
+  const backEl=state.obStep>0?h("button",{class:"ob-back",onclick:()=>{state.obStep--;render()}},"← Zurück"):null;
+  return h("div",{class:"ob"},h("div",{class:"ob-inner"},h("div",{class:"ob-progress"},...dots),iconEl,titleEl,...contentEls,btnEl,backEl));
+}
+function nextOb(){
+  if(state.obStep===1){if(!state.obName?.trim())return;ls.set(KEYS.name,state.obName.trim());state.name=state.obName.trim();}
+  if(state.obStep===3){
+    // Save first entry
+    const text=state.obFirstEntry||state.obFirstCustom||"";
+    if(text.trim()){
+      const entry={id:Date.now(),source:"free",tag:"Gedanke",title:"Geld fühlt sich für mich gerade an wie…",text:`…${text.trim()}`,date:new Date().toISOString()};
+      state.entries=[entry,...state.entries];
+      ls.set(KEYS.entries,state.entries);
+    }
+    ls.set(KEYS.onboarded,true);state.onboarded=true;updateStreak();render();return;
+  }
+  state.obStep++;render();
+}
+
+// ─── Header ───────────────────────────────────────────────────────────────────
+function buildJar(){
+  const coins=state.coins;
+  const streak=state.streak.count||0;
+  const weeksToNext=streak>0?4-(streak%4===0?4:streak%4):4;
+  const fillPct=Math.min((coins/20)*100,100); // fill based on coins, max visual at 20
+
+  // SVG jar with fill level
+  const fillHeight=Math.round(60*fillPct/100);
+  const fillY=80-fillHeight;
+
+  // Coin dots inside jar (up to 10 visible)
+  const visibleCoins=Math.min(coins,10);
+  const coinDots=[];
+  for(let i=0;i<visibleCoins;i++){
+    const col=i%3;
+    const row=Math.floor(i/3);
+    coinDots.push(`<circle cx="${28+col*12}" cy="${72-row*12}" r="4" fill="#c9a96e" opacity="0.9"/>`);
+    coinDots.push(`<text x="${28+col*12}" y="${76-row*12}" text-anchor="middle" font-size="5" fill="#7a5c20">€</text>`);
+  }
+
+  const jarSvg=`<svg width="70" height="90" viewBox="0 0 70 90" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <clipPath id="jarClip">
+        <path d="M15,20 Q12,22 11,28 L8,75 Q8,82 35,82 Q62,82 62,75 L59,28 Q58,22 55,20 Z"/>
+      </clipPath>
+    </defs>
+    <!-- Jar body outline -->
+    <path d="M15,20 Q12,22 11,28 L8,75 Q8,82 35,82 Q62,82 62,75 L59,28 Q58,22 55,20 Z" fill="rgba(242,232,207,0.15)" stroke="rgba(242,232,207,0.5)" stroke-width="1.5"/>
+    <!-- Fill -->
+    <rect x="8" y="${fillY+20}" width="54" height="${fillHeight+62}" fill="rgba(166,138,100,0.35)" clip-path="url(#jarClip)"/>
+    <!-- Coins -->
+    ${coinDots.join("")}
+    <!-- Jar neck -->
+    <rect x="22" y="12" width="26" height="10" rx="3" fill="rgba(242,232,207,0.15)" stroke="rgba(242,232,207,0.5)" stroke-width="1.5"/>
+    <!-- Lid -->
+    <rect x="19" y="8" width="32" height="6" rx="3" fill="rgba(166,138,100,0.6)" stroke="rgba(242,232,207,0.4)" stroke-width="1"/>
+    <!-- Shine -->
+    <path d="M14,35 Q13,50 13,62" stroke="rgba(255,255,255,0.15)" stroke-width="3" fill="none" stroke-linecap="round"/>
+  </svg>`;
+
+  const jar=h("div",{class:"jar-hover-wrap",style:{cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:"6px",position:"relative"}});
+  jar.innerHTML=jarSvg+`<div class="jar-tooltip">
+    <p style="font-weight:700;margin-bottom:6px;color:#2A4D69">✦ Dein Spar-Glas</p>
+    <p>4 Wochen am Stück → <strong>+5 🪙</strong></p>
+    <p style="margin-top:4px">Woche verpasst → <strong style="color:#c97b7b">-5 🪙</strong></p>
+    <p style="margin-top:6px;color:#8a9aaa;font-size:11px">Kontinuität ist die stärkste Gewohnheit.</p>
+  </div>`;
+
+  const info=h("div",{class:"jar-info"},
+    h("span",{class:"jar-coins"},`🪙 ${coins}`),
+    h("span",{class:"jar-streak"},streak>0?`${streak} Wo. am Stück`:"Starte heute!")
+  );
+  if(weeksToNext<4&&streak>0){
+    const next=h("span",{class:"jar-next"},`+5 in ${weeksToNext} Wo.`);
+    info.appendChild(next);
+  }
+
+  return h("div",{class:"jar-wrap"},jar,info);
+}
+
+function buildHeader(){
+  const now=new Date();
+  const date=now.toLocaleDateString("de-DE",{weekday:"long",day:"2-digit",month:"long"});
+
+  // Dropdown menu
+  const menu=h("div",{class:"hd-menu",id:"hd-menu"},
+    h("button",{class:"hd-menu-item",onclick:(e)=>{
+      e.stopPropagation();
+      document.getElementById("hd-menu").classList.remove("open");
+      exportData();
+    }},"↓  Journal exportieren"),
+    h("button",{class:"hd-menu-item",onclick:(e)=>{
+      e.stopPropagation();
+      document.getElementById("hd-menu").classList.remove("open");
+      state.onboarded=false;state.obStep=0;state.obName=state.name;render();
+    }},"◈  Onboarding wiederholen"),
+    h("button",{class:"hd-menu-item",style:{color:"#c97b7b"},onclick:(e)=>{
+      e.stopPropagation();
+      if(confirm("Wirklich alle Daten löschen?")){
+        Object.values(KEYS).forEach(k=>localStorage.removeItem(k));
+        location.reload();
+      }
+    }},"✕  Daten zurücksetzen")
+  );
+
+  const menuBtn=h("button",{class:"hd-export",title:"Menü",onclick:(e)=>{
+    e.stopPropagation();
+    document.getElementById("hd-menu").classList.toggle("open");
+  }},"⋮");
+
+  setTimeout(()=>{
+    document.addEventListener("click",()=>{
+      const m=document.getElementById("hd-menu");
+      if(m) m.classList.remove("open");
+    });
+  },0);
+
+  const wrap=h("div",{style:{position:"relative",zIndex:"999",flexShrink:"0"}},menuBtn,menu);
+
+  return h("header",{class:"hd"},
+    h("div",{class:"hd-inner"},
+      h("p",{class:"hd-eyebrow"},"Money Mindset Journal von"),
+      h("h1",{class:"hd-title"},state.name||"…"),
+      h("p",{class:"hd-date"},date),
+      h("p",{class:"hd-reminder"},"💾 Exportiere dein Journal über das Menü oben rechts, damit nichts verloren geht.")
+    ),
+    buildJar(),
+    wrap,
+    h("div",{class:"hd-orb"})
+  );
+}
+
+// ─── Nav ──────────────────────────────────────────────────────────────────────
+function buildNav(){
+  const tabs=[{id:"week",icon:"◈",label:"Woche"},{id:"deep",icon:"✦",label:"Tiefe"},{id:"goals",icon:"◇",label:"Ziele"},{id:"affirm",icon:"✩",label:"Affirmationen"},{id:"entries",icon:"✐",label:"Journal"}];
+  return h("nav",{class:"nav"},...tabs.map(t=>
+    h("button",{class:state.tab===t.id?"active":"",onclick:()=>{state.tab=t.id;render()}},
+      h("span",{class:"ni"},t.icon),t.label)
+  ));
+}
+
+// ─── Weekly Page ──────────────────────────────────────────────────────────────
+function buildWeekly(){
+  const wk=state.weekView==="current"?getWeekKey():state.weekView;
+  const tw=state.weekly[wk]||{};
+  const isCurrentWeek=wk===getWeekKey();
+  function upd(field,val){
+    if(!isCurrentWeek) return; // read-only for past weeks
+    state.weekly={...state.weekly,[wk]:{...tw,[field]:val}};ls.set(KEYS.weekly,state.weekly);
+  }
+
+  // Mood slider
+  const moodVal=tw.mood||3;
+  const currentMood=MOOD_OPTIONS.find(m=>m.val===moodVal)||MOOD_OPTIONS[2];
+  const slider=h("input",{type:"range",min:"1",max:"5",step:"1",value:String(moodVal),class:"mood-slider"});
+  slider.addEventListener("input",e=>{upd("mood",parseInt(e.target.value));
+    const lbl=document.getElementById("mood-display");
+    const mo=MOOD_OPTIONS.find(m=>m.val===parseInt(e.target.value));
+    if(lbl&&mo){lbl.querySelector(".mood-slider-emoji").textContent=mo.emoji;lbl.querySelector(".mood-slider-label").textContent=mo.label;}
+  });
+  const sliderLabels=h("div",{class:"mood-slider-ticks"},...MOOD_OPTIONS.map(m=>h("span",{class:"mood-tick"},m.emoji)));
+  const moodDisplay=h("div",{id:"mood-display",class:"mood-slider-display"},
+    h("span",{class:"mood-slider-emoji"},currentMood.emoji),
+    h("span",{class:"mood-slider-label"},currentMood.label)
+  );
+  const moodCard=h("div",{class:"card"},
+    h("p",{class:"card-label"},"Wie fühle ich mich gerade mit Geld?"),
+    moodDisplay,
+    slider
+  );
+
+  // Prompts
+  const promptCards=WEEKLY_PROMPTS.map(p=>{
+    const lines=Array.from({length:p.rows},(_,i)=>{
+      const inp=h("input",{class:"line-input",placeholder:"…",value:(tw[p.id]||[])[i]||""});
+      inp.addEventListener("input",e=>{const arr=[...(tw[p.id]||Array(p.rows).fill(""))];arr[i]=e.target.value;upd(p.id,arr);});
+      return h("div",{class:"line-wrap"},h("span",{class:"line-num"},`${i+1}.`),inp);
+    });
+    return h("div",{class:"card"},h("p",{class:"card-label"},h("span",{style:{color:C.tan,marginRight:"6px"}},p.icon),p.label),...lines);
+  });
+
+  // Changed question
+  const changeCard=h("div",{class:"card"},
+    h("p",{class:"card-label"},"◇ Was hat sich diese Woche für dich verändert?"),
+    ...[0,1].map(i=>{
+      const inp=h("input",{class:"line-input",placeholder:"…",value:(tw.changed||[])[i]||"",disabled:!isCurrentWeek});
+      inp.addEventListener("input",e=>{const arr=[...(tw.changed||["",""])];arr[i]=e.target.value;upd("changed",arr);});
+      return h("div",{class:"line-wrap"},h("span",{class:"line-num"},`${i+1}.`),inp);
+    })
+  );
+
+  // Balances
+  const balBoxes=BALANCE_FIELDS.map(b=>{
+    const inp=h("input",{class:"balance-input",placeholder:"€",value:(tw.balances||{})[b]||""});
+    inp.addEventListener("input",e=>{upd("balances",{...(tw.balances||{}),[b]:e.target.value});});
+    return h("div",{class:"balance-box"},h("p",{class:"balance-box-label"},b),inp);
+  });
+  const balCard=h("div",{class:"card"},
+    h("p",{class:"card-label"},"◎ Aktueller Stand"),
+    h("p",{style:{fontSize:"12px",color:C.textLight,margin:"-8px 0 12px",fontStyle:"italic"}},"Nicht zur Kontrolle – zur Bewusstwerdung."),
+    h("div",{class:"balance-grid"},...balBoxes));
+
+  const selector=buildWeekSelector(wk, (k)=>{state.weekView=k;render();});
+  const readOnlyHint=!isCurrentWeek?h("p",{style:{fontSize:"12px",color:C.tan,margin:"-12px 0 16px",fontFamily:"system-ui,sans-serif",fontStyle:"italic"}},"◎ Ansicht vergangener Woche – nur lesbar"):null;
+
+  return h("div",{class:"page"},
+    h("p",{class:"slabel"},"Diese Woche"),
+    h("p",{class:"tab-intro"},"Für den schnellen wöchentlichen Check-in – Stimmung, Freude, Lernen, nächster Schritt."),
+    selector,
+    readOnlyHint,
+    moodCard,...promptCards,changeCard,balCard);
+}
+
+// ─── Deep Page ────────────────────────────────────────────────────────────────
+function buildDeep(){
+  if(state.deepActive!==null){
+    const ta=h("textarea",{class:"form-textarea",placeholder:"Schreibe, was wirklich wahr ist für dich…"},state.deepDraft||"");
+    ta.addEventListener("input",e=>{state.deepDraft=e.target.value;});
+    setTimeout(()=>ta.focus(),50);
+    const save=h("button",{class:"btn-tan",onclick:()=>{
+      if(!state.deepDraft?.trim())return;
+      const q=state.deepActive<DEEP_QUESTIONS.length
+        ?DEEP_QUESTIONS[state.deepActive]
+        :state.customQuestions[state.deepActive-DEEP_QUESTIONS.length];
+      const idx=state.entries.findIndex(e=>e.question===q&&e.source==="deep");
+      if(idx>=0) state.entries[idx]={...state.entries[idx],text:state.deepDraft,updatedAt:new Date().toISOString()};
+      else state.entries=[{id:Date.now(),source:"deep",question:q,text:state.deepDraft,tag:"Aha-Moment",date:new Date().toISOString()},...state.entries];
+      ls.set(KEYS.entries,state.entries);
+      state.deepActive=null;state.deepDraft="";render();
+    }},"Speichern");
+    const cancel=h("button",{class:"btn-ghost",onclick:()=>{state.deepActive=null;state.deepDraft="";render();}},"Abbrechen");
+    return h("div",{class:"page"},h("p",{class:"slabel"},"Tiefenarbeit"),
+      h("div",{class:"card"},h("p",{class:"deep-Q"},"✦ ",state.deepActive<DEEP_QUESTIONS.length?DEEP_QUESTIONS[state.deepActive]:state.customQuestions[state.deepActive-DEEP_QUESTIONS.length]),ta,h("div",{class:"btn-row"},save,cancel)));
+  }
+
+  const selector=buildWeekSelector(state.deepView,(k)=>{state.deepView=k;render();});
+  const selectedWkStart=state.deepView==="current"?null:(() => {
+    const [y,w]=state.deepView.split("-W");
+    const jan1=new Date(parseInt(y),0,1);
+    const dayOfWeek=jan1.getDay()||7;
+    const monday=new Date(jan1);
+    monday.setDate(jan1.getDate()+(parseInt(w)-1)*7+(1-dayOfWeek+7)%7-(dayOfWeek===1?7:0));
+    return monday;
+  })();
+  const selectedWkEnd=selectedWkStart?new Date(selectedWkStart.getTime()+7*86400000):null;
+
+  const cards=DEEP_QUESTIONS.map((q,i)=>{
+    // Find answer – for past weeks filter by date range
+    let answered;
+    if(state.deepView==="current"){
+      answered=state.entries.find(e=>e.question===q&&e.source==="deep");
+    } else {
+      answered=state.entries.find(e=>e.question===q&&e.source==="deep"&&new Date(e.date)>=selectedWkStart&&new Date(e.date)<selectedWkEnd);
+    }
+    const numEl=h("span",{class:`deep-num${answered?" done":""}`},answered?"✦":String(i+1));
+    const qEl=h("p",{class:"deep-q"},q);
+    const subEl=answered
+      ?h("p",{class:"deep-preview"},`"${answered.text.slice(0,90)}${answered.text.length>90?"…":""}"`)
+      :h("p",{class:"deep-empty"},state.deepView==="current"?"Noch nicht beantwortet":"Nicht beantwortet in dieser Woche");
+    const arrow=h("span",{class:"deep-arrow"},answered?"✎":(state.deepView==="current"?"→":"–"));
+    const card=h("button",{class:"deep-card",onclick:()=>{
+      if(state.deepView!=="current"&&!answered) return;
+      state.deepActive=i;state.deepDraft=answered?.text||"";render();
+    }},
+      h("div",{style:{display:"flex",gap:"12px",alignItems:"flex-start",flex:"1"}},numEl,h("div",{style:{flex:"1",textAlign:"left"}},qEl,subEl)),arrow);
+    return card;
+  });
+
+  // Custom questions (index offset by DEEP_QUESTIONS.length)
+  const customCards=state.customQuestions.map((q,ci)=>{
+    const idx=DEEP_QUESTIONS.length+ci;
+    let answered;
+    if(state.deepView==="current"){
+      answered=state.entries.find(e=>e.question===q&&e.source==="deep");
+    } else {
+      answered=state.entries.find(e=>e.question===q&&e.source==="deep"&&new Date(e.date)>=selectedWkStart&&new Date(e.date)<selectedWkEnd);
+    }
+    const numEl=h("span",{class:`deep-num${answered?" done":""}`},answered?"✦":"✩");
+    const qEl=h("p",{class:"deep-q"},q);
+    const subEl=answered
+      ?h("p",{class:"deep-preview"},`"${answered.text.slice(0,90)}${answered.text.length>90?"…":""}"`)
+      :h("p",{class:"deep-empty"},state.deepView==="current"?"Noch nicht beantwortet":"Nicht beantwortet in dieser Woche");
+    const arrow=h("span",{class:"deep-arrow"},answered?"✎":(state.deepView==="current"?"→":"–"));
+    const delBtn=h("button",{style:{background:"none",border:"none",color:"#d8cdb5",cursor:"pointer",fontSize:"13px",padding:"0 4px",flexShrink:"0"},onclick:(e)=>{
+      e.stopPropagation();
+      state.customQuestions=state.customQuestions.filter((_,j)=>j!==ci);
+      ls.set(KEYS.customQ,state.customQuestions);render();
+    }},"✕");
+    const card=h("button",{class:"deep-card",style:{borderColor:"rgba(166,138,100,0.3)"},onclick:()=>{
+      if(state.deepView!=="current"&&!answered) return;
+      state.deepActive=idx;state.deepDraft=answered?.text||"";render();
+    }},
+      h("div",{style:{display:"flex",gap:"12px",alignItems:"flex-start",flex:"1"}},numEl,h("div",{style:{flex:"1",textAlign:"left"}},qEl,subEl)),arrow,delBtn);
+    return card;
+  });
+
+  // Add question form
+  let addForm=null;
+  if(state.deepAddingQ){
+    const inp=h("input",{class:"form-input",placeholder:"Deine eigene Frage…",value:state.deepNewQ||""});
+    inp.addEventListener("input",e=>{state.deepNewQ=e.target.value;});
+    setTimeout(()=>inp.focus(),50);
+    const save=h("button",{class:"btn-tan",onclick:()=>{
+      if(!state.deepNewQ?.trim())return;
+      state.customQuestions=[...state.customQuestions,state.deepNewQ.trim()];
+      ls.set(KEYS.customQ,state.customQuestions);
+      state.deepNewQ="";state.deepAddingQ=false;render();
+    }},"Hinzufügen");
+    const cancel=h("button",{class:"btn-ghost",onclick:()=>{state.deepAddingQ=false;state.deepNewQ="";render();}},"Abbrechen");
+    addForm=h("div",{class:"card",style:{borderColor:"rgba(166,138,100,0.3)"}},
+      h("p",{class:"card-label"},"✩ Eigene Frage hinzufügen"),
+      inp,
+      h("div",{class:"btn-row"},save,cancel));
+  }
+
+  const addBtn=!state.deepAddingQ?h("button",{class:"btn-secondary",style:{width:"100%",textAlign:"center",marginTop:"4px"},onclick:()=>{state.deepAddingQ=true;render();}},"+ Eigene Frage hinzufügen"):null;
+
+  return h("div",{class:"page"},
+    h("p",{class:"slabel"},"Tiefenarbeit"),
+    h("p",{class:"tab-intro"},"Für die echte Mindset-Arbeit – wenn du Zeit hast, tiefer zu gehen als der Alltag erlaubt."),
+    selector,
+    ...cards,
+    ...customCards,
+    addForm,
+    addBtn);
+}
+
+// ─── Goals Page ───────────────────────────────────────────────────────────────
+function buildGoals(){
+  const pageH=h("div",{class:"ph"},h("p",{class:"slabel"},"Meine Ziele"),h("button",{class:"btn-tan",onclick:()=>{state.adding=!state.adding;render()}},"+ Neu"));
+
+  let addForm=null;
+  if(state.adding){
+    const emojiRow=h("div",{class:"emoji-row"},...EMOJIS.map(e=>h("button",{class:`emoji-btn${state.goalForm.emoji===e?" active":""}`,onclick:()=>{state.goalForm.emoji=e;render()}},e)));
+    const fields=[["name","Name des Ziels","text"],["vision","Warum ist dieses Ziel wichtig?","text"],["target","Zielbetrag (€)","number"]];
+    const inputs=fields.map(([k,p,t])=>{
+      const inp=h("input",{class:"form-input",placeholder:p,type:t,value:state.goalForm[k]||""});
+      inp.addEventListener("input",e=>{state.goalForm[k]=e.target.value;});
+      return inp;
+    });
+    const dateInp=h("input",{class:"form-input",type:"date",value:state.goalForm.by||""});
+    dateInp.addEventListener("input",e=>{state.goalForm.by=e.target.value;});
+    const save=h("button",{class:"btn-tan",onclick:()=>{
+      if(!state.goalForm.name)return;
+      state.goals=[...state.goals,{...state.goalForm,id:Date.now(),saved:parseFloat(state.goalForm.saved)||0,target:parseFloat(state.goalForm.target)||0}];
+      ls.set(KEYS.goals,state.goals);
+      state.goalForm={name:"",vision:"",target:"",saved:"",emoji:"◇",by:""};
+      state.adding=false;render();
+    }},"Speichern");
+    const cancel=h("button",{class:"btn-ghost",onclick:()=>{state.adding=false;render();}},"Abbrechen");
+    addForm=h("div",{class:"card"},emojiRow,...inputs,dateInp,h("div",{class:"btn-row"},save,cancel));
+  }
+
+  const goalCards=state.goals.map(g=>{
+    const pct=g.target>0?Math.min((g.saved/g.target)*100,100):0;
+    const topRow=h("div",{style:{display:"flex",gap:"12px",alignItems:"flex-start"}},
+      h("span",{style:{fontSize:"26px"}},g.emoji),
+      h("div",{style:{flex:"1"}},
+        h("p",{class:"goal-name"},g.name),
+        g.vision?h("p",{class:"goal-vision"},`"${g.vision}"`):null,
+        g.by?h("p",{class:"goal-by"},`Bis ${new Date(g.by).toLocaleDateString("de-DE",{month:"long",year:"numeric"})}`):null
+      ),
+      h("button",{class:"btn-del",onclick:()=>{state.goals=state.goals.filter(x=>x.id!==g.id);ls.set(KEYS.goals,state.goals);render();}},"✕")
+    );
+    let progressEl=null;
+    if(g.target>0){
+      const barFill=h("div",{class:"bar-fill",style:{width:`${pct}%`,background:pct>=100?"#5a9e7a":`linear-gradient(90deg,${C.tan},${C.tanLight})`}});
+      progressEl=h("div",{style:{margin:"14px 0 8px"}},
+        h("div",{style:{display:"flex",justifyContent:"space-between",marginBottom:"4px"}},
+          h("span",{style:{fontSize:"14px",color:C.tan}},`${(g.saved||0).toFixed(0)} € gespart`),
+          h("span",{style:{fontSize:"14px",color:C.textLight}},`${g.target.toFixed(0)} € Ziel`)),
+        h("div",{class:"bar-bg"},barFill),
+        h("p",{class:"goal-pct"},pct>=100?"🎉 Geschafft!`":`${pct.toFixed(0)}% — noch ${(g.target-g.saved).toFixed(0)} €`)
+      );
+    }
+    let depositEl=null;
+    if(state.depositFor===g.id){
+      const inp=h("input",{class:"form-input",type:"number",placeholder:"€",style:{flex:"1",marginBottom:"0"},value:state.depositAmt||""});
+      inp.addEventListener("input",e=>{state.depositAmt=e.target.value;});
+      setTimeout(()=>inp.focus(),50);
+      const ok=h("button",{class:"btn-tan",onclick:()=>{
+        const amt=parseFloat(state.depositAmt);if(!amt)return;
+        state.goals=state.goals.map(x=>x.id===g.id?{...x,saved:(x.saved||0)+amt}:x);
+        ls.set(KEYS.goals,state.goals);state.depositFor=null;state.depositAmt="";render();
+      }},"Einzahlen");
+      const cx=h("button",{class:"btn-ghost",onclick:()=>{state.depositFor=null;state.depositAmt="";render();}},"✕");
+      depositEl=h("div",{style:{display:"flex",gap:"8px",marginTop:"8px",alignItems:"center"}},inp,ok,cx);
+    } else if(g.target>0){
+      depositEl=h("button",{class:"btn-blue",onclick:()=>{state.depositFor=g.id;render();}},"+ Einzahlung");
+    }
+    return h("div",{class:"goal-card"},topRow,progressEl,depositEl);
+  });
+
+  const empty=state.goals.length===0&&!state.adding?h("div",{class:"empty"},h("p",{class:"empty-icon"},"◇"),h("p",{class:"empty-text"},"Noch kein Ziel definiert."),h("p",{class:"empty-hint"},"Was möchtest du dir als nächstes ermöglichen?")):null;
+
+  return h("div",{class:"page"},pageH,
+    h("p",{class:"tab-intro"},"Für das, worauf du hinarbeitest – Träume die eine Zahl bekommen und Fortschritt der sichtbar wird."),
+    addForm,empty,...goalCards);
+}
+
+// ─── Entries Page ─────────────────────────────────────────────────────────────
+function buildEntries(){
+  const free=state.entries.filter(e=>e.source!=="deep");
+
+  if(state.journalMode==="new"||state.journalMode==="edit"){
+    const isEdit=state.journalMode==="edit";
+    const tagRow=h("div",{class:"tag-scroll"},...ENTRY_TAGS.map(t=>{
+      const btn=h("button",{class:"tag-btn",onclick:()=>{state.journalDraft.tag=t;render()}},t);
+      if(state.journalDraft.tag===t) Object.assign(btn.style,{borderColor:TAG_COLORS[t],color:TAG_COLORS[t],background:TAG_COLORS[t]+"22"});
+      return btn;
+    }));
+    const titleInp=h("input",{class:"form-input",placeholder:"Titel (optional)",value:state.journalDraft.title||""});
+    titleInp.addEventListener("input",e=>{state.journalDraft.title=e.target.value;});
+    const ta=h("textarea",{class:"form-textarea",style:{minHeight:"180px"},placeholder:"Was beschäftigt dich gerade wirklich?"},state.journalDraft.text||"");
+    ta.addEventListener("input",e=>{state.journalDraft.text=e.target.value;});
+    setTimeout(()=>ta.focus(),50);
+    const save=h("button",{class:"btn-tan",onclick:()=>{
+      if(!state.journalDraft.text?.trim())return;
+      if(isEdit&&state.journalDraft.id){
+        state.entries=state.entries.map(x=>x.id===state.journalDraft.id?{...x,...state.journalDraft,updatedAt:new Date().toISOString()}:x);
+      } else {
+        state.entries=[{...state.journalDraft,id:Date.now(),source:"free",date:new Date().toISOString()},...state.entries];
+      }
+      ls.set(KEYS.entries,state.entries);
+      state.journalDraft={title:"",text:"",tag:"Gedanke"};state.journalMode="list";render();
+    }},isEdit?"Änderungen speichern":"Speichern");
+    const cancel=h("button",{class:"btn-ghost",onclick:()=>{state.journalDraft={title:"",text:"",tag:"Gedanke"};state.journalMode="list";render();}},"Abbrechen");
+    return h("div",{class:"page"},
+      h("p",{class:"slabel"},isEdit?"Eintrag bearbeiten":"Neuer Eintrag"),
+      h("div",{class:"card"},tagRow,titleInp,ta,h("div",{class:"btn-row"},save,cancel)));
+  }
+
+  if(state.journalMode==="view"&&state.journalViewing){
+    const e=state.journalViewing;
+    const chip=h("span",{class:"tag-chip",style:{borderColor:TAG_COLORS[e.tag],color:TAG_COLORS[e.tag]}},e.tag);
+    const editBtn=h("button",{style:{background:"transparent",color:C.navy,border:`1px solid ${C.border}`,borderRadius:"8px",padding:"10px 16px",fontSize:"12px",marginTop:"20px",marginRight:"8px"},onclick:()=>{
+      state.journalDraft={...e};state.journalMode="edit";render();
+    }},"✎ Bearbeiten");
+    const del=h("button",{style:{background:"transparent",color:"#c97b7b",border:"1px solid rgba(201,123,123,.3)",borderRadius:"8px",padding:"10px 16px",fontSize:"12px",marginTop:"20px"},onclick:()=>{
+      state.entries=state.entries.filter(x=>x.id!==e.id);ls.set(KEYS.entries,state.entries);state.journalMode="list";render();
+    }},"Löschen");
+    return h("div",{class:"page"},
+      h("button",{class:"back-btn",onclick:()=>{state.journalMode="list";render();}},"← Zurück"),
+      h("div",{class:"card"},chip,
+        e.title?h("h2",{class:"view-title"},e.title):null,
+        h("p",{class:"view-date"},new Date(e.date).toLocaleDateString("de-DE",{weekday:"long",day:"2-digit",month:"long",year:"numeric"})),
+        h("p",{class:"view-text"},e.text),
+        h("div",{style:{display:"flex",gap:"8px",flexWrap:"wrap"}},editBtn,del)));
+  }
+
+  const filtered=state.journalFilter==="Alle"?free:free.filter(e=>e.tag===state.journalFilter);
+  const ph=h("div",{class:"ph"},h("p",{class:"slabel"},"Tagebuch"),h("button",{class:"btn-tan",onclick:()=>{state.journalMode="new";render();}},"✐ Neu"));
+  const filterRow=h("div",{class:"tag-scroll"},...["Alle",...ENTRY_TAGS].map(t=>{
+    const btn=h("button",{class:"tag-btn",onclick:()=>{state.journalFilter=t;render()}},t);
+    if(state.journalFilter===t) Object.assign(btn.style,{borderColor:TAG_COLORS[t]||C.tan,color:TAG_COLORS[t]||C.tan});
+    return btn;
+  }));
+  const empty=filtered.length===0?h("div",{class:"empty"},h("p",{class:"empty-icon"},"✐"),h("p",{class:"empty-text"},"Noch nichts geschrieben."),h("p",{class:"empty-hint"},"Was trägt dich oder drückt dich gerade?")):null;
+  const cards=filtered.map(e=>{
+    const dot=h("div",{class:"tag-dot",style:{background:TAG_COLORS[e.tag]}});
+    const meta=h("div",{style:{display:"flex",justifyContent:"space-between",gap:"8px"}},h("p",{class:"entry-title"},e.title||e.tag),h("p",{class:"entry-date"},new Date(e.date).toLocaleDateString("de-DE")));
+    const preview=h("p",{class:"entry-preview"},e.text.slice(0,100)+(e.text.length>100?"…":""));
+    const card=h("button",{class:"entry-card",onclick:()=>{state.journalViewing=e;state.journalMode="view";render();}},dot,h("div",{style:{flex:"1"}},meta,preview));
+    return card;
+  });
+  return h("div",{class:"page"},ph,
+    h("p",{class:"tab-intro"},"Für alles was dich bewegt – Sorgen, Ideen, Aha-Momente, Wünsche. Kein Format, kein Druck."),
+    filterRow,empty,...cards);
+}
+
+// ─── Affirmations Page ────────────────────────────────────────────────────────
+function buildAffirm(){
+  const affs=state.affirmations;
+
+  const lines=affs.map((a,i)=>{
+    const inp=h("input",{class:"line-input gold",placeholder:"Ich bin…",value:a||""});
+    inp.addEventListener("input",e=>{
+      const arr=[...state.affirmations];arr[i]=e.target.value;
+      state.affirmations=arr;ls.set(KEYS.affirmations,arr);
+    });
+    const del=h("button",{style:{background:"none",border:"none",color:C.textLight,cursor:"pointer",fontSize:"14px",flexShrink:"0",padding:"0 4px"},onclick:()=>{
+      const arr=state.affirmations.filter((_,j)=>j!==i);
+      state.affirmations=arr;ls.set(KEYS.affirmations,arr);render();
+    }},"✕");
+    return h("div",{class:"line-wrap"},h("span",{class:"line-num"},`${i+1}.`),inp,del);
+  });
+
+  const addBtn=h("button",{class:"btn-secondary",style:{marginTop:"12px",width:"100%",textAlign:"center"},onclick:()=>{
+    state.affirmations=[...state.affirmations,""];
+    ls.set(KEYS.affirmations,state.affirmations);render();
+  }},"+ Affirmation hinzufügen");
+
+  const card=h("div",{class:"card"},
+    h("p",{class:"card-label"},"✩ Meine Geld-Affirmationen"),
+    h("p",{style:{fontSize:"12px",color:C.textLight,margin:"-8px 0 16px",fontStyle:"italic"}},"Schreibe sie auf, als wären sie schon wahr."),
+    ...lines,
+    addBtn
+  );
+
+  return h("div",{class:"page"},
+    h("p",{class:"slabel"},"Affirmationen"),
+    h("p",{class:"tab-intro"},"Für die tägliche Erinnerung – Sätze die dich erden, stärken und neu ausrichten."),
+    card);
+}
+
+// ─── App ──────────────────────────────────────────────────────────────────────
+function buildApp(){
+  if(!state.onboarded) return buildOnboarding();
+  let page;
+  if(state.tab==="week") page=buildWeekly();
+  else if(state.tab==="deep") page=buildDeep();
+  else if(state.tab==="goals") page=buildGoals();
+  else if(state.tab==="affirm") page=buildAffirm();
+  else page=buildEntries();
+  return h("div",{class:"app"},buildHeader(),buildNav(),h("div",{class:"main"},page));
+}
+
+render();
+</script>
+</body>
+</html>
